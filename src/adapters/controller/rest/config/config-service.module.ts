@@ -3,6 +3,7 @@ import { TypeOrmConfigModule } from 'src/adapters/repository/typeorm/config/type
 import LivroRepositoryTypeORM from 'src/adapters/repository/typeorm/livro.repository.typeorm';
 import { CreateLivroService } from 'src/usecase/create-livro-service';
 import { FindAllLivroService } from 'src/usecase/find-all-livro-service';
+import { FindLivroByAutorNameService } from 'src/usecase/find-livro-by-autor-name-service';
 
 @Module({
   imports: [TypeOrmConfigModule],
@@ -10,6 +11,7 @@ import { FindAllLivroService } from 'src/usecase/find-all-livro-service';
 export class ConfigServiceModule {
   static FIND_ALL_LIVRO_SERVICE = 'FindAllLivroService';
   static CREATE_LIVRO_SERVICE = 'CreateLivroService';
+  static FIND_LIVRO_BY_AUTOR_NAME_SERVICE = 'FindLivroByAutorNameService';
 
   static register(): DynamicModule {
     return {
@@ -27,10 +29,17 @@ export class ConfigServiceModule {
           useFactory: (livroRepository: LivroRepositoryTypeORM) =>
             new FindAllLivroService(livroRepository),
         },
+        {
+          inject: [LivroRepositoryTypeORM],
+          provide: ConfigServiceModule.FIND_LIVRO_BY_AUTOR_NAME_SERVICE,
+          useFactory: (livroRepository: LivroRepositoryTypeORM) =>
+            new FindLivroByAutorNameService(livroRepository),
+        },
       ],
       exports: [
         ConfigServiceModule.FIND_ALL_LIVRO_SERVICE,
         ConfigServiceModule.CREATE_LIVRO_SERVICE,
+        ConfigServiceModule.FIND_LIVRO_BY_AUTOR_NAME_SERVICE,
       ],
     };
   }
