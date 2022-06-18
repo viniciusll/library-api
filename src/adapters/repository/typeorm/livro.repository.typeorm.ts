@@ -37,6 +37,19 @@ export default class LivroRepositoryTypeORM implements LivroRepository {
     return livroArray;
   }
 
+  async findLivroByAutorName(autorName: string): Promise<Livro[]> {
+    const livroEntityArray: LivroEntity[] =
+      await this.livroEntityRepository.find({
+        where: [{ autor: { name: autorName } }],
+      });
+
+    const livroArray: Livro[] = livroEntityArray.map((livroEntity) => {
+      return this.mapToLivro(livroEntity);
+    });
+
+    return livroArray;
+  }
+
   private mapToLivroEntity(livro: Livro): LivroEntity {
     const livroEntity: LivroEntity = new LivroEntity();
     livroEntity.name = livro.name;
